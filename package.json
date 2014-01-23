@@ -1,0 +1,23 @@
+{
+  "name": "jsoni",
+  "version": "0.0.0",
+  "description": "Serialize and deserialize Javascript objects into JSON",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+      "mocha": "*",
+      "should": "*",
+      "deepequal": "*"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JayceTDE/"
+  },
+  "author": "Jayce Pulsipher <jaycemp@gmail.com>",
+  "license": "MIT"
+}
