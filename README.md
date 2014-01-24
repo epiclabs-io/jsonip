@@ -1,6 +1,6 @@
 # jsoni
 
-My attempt at javascript object serialization and deserialization
+Serialize and deserialize Javascript objects into JSON
 
 It will stringify and parse these values (which JSON.stringify and JSON.parse will not):
 
