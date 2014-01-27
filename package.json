@@ -1,15 +1,15 @@
 {
   "name": "jsoni",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Serialize and deserialize Javascript objects into JSON",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "devDependencies": {
-      "mocha": "*",
-      "should": "*",
-      "deepequal": "*"
+    "mocha": "*",
+    "should": "*",
+    "deepequal": "*"
   },
   "scripts": {
     "test": "mocha --reporter spec"
