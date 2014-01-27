@@ -90,7 +90,27 @@ describe('jsoni', function () {
         parsedMe.name.should.equal('Jayce');
         parsedMe.age.should.equal(22);
         
-    })
+    });
+    
+    it('should work on deeply nested values', function () {
+        
+        var deep = {
+            a: {
+                b: {
+                    c: {
+                        d: new Date()
+                    }
+                }
+            }
+        };
+        
+        var deepStr = jsoni.stringify(deep);
+        
+        var deepParse = jsoni.parse(deepStr);
+        
+        deepEqual(deepParse, deep).should.be.true;
+        
+    });
     
 });
 

@@ -1,4 +1,4 @@
-# jsoni
+# jsoni (JSON improved)
 
 Serialize and deserialize Javascript objects into JSON
 
@@ -13,7 +13,49 @@ It will stringify and parse these values (which JSON.stringify and JSON.parse wi
 
 If any core javascript objects are missing, please submit an issue or pull request
 
-`undefined` values will not stringify or parse
+```javascript
+
+var obj = {
+    a: NaN,
+    b: Infinity,
+    c: /[abc]+def/gi
+};
+
+var objStr = jsoni.stringify(obj);
+/*
+'{
+    "a": "NaN",
+    "b": "Infinity",
+    "c": {
+        "constructName": "RegExp",
+        "data": {
+            "source": "[abc]+def",
+            "flags": "gi"
+        }
+    }
+}'
+*/
+
+var objB = jsoni.parse(objStr);
+
+// objB.c is a regular expression clone of obj.c
+objB.c.toString();
+// '/[abc]+def/gi'
+
+objB.c.test('aaabbbcccdef');
+// true
+
+```
+
+## Installation
+
+```bash
+npm install jsoni
+```
+
+## Dependencies
+
+none
 
 ## API
 
@@ -87,3 +129,10 @@ is specified. If neither are specified, then the json data will be passed direct
 ### jsoni.unregister(name)
 
 unregister a constructor from jsoni
+
+## Limitations
+
+  - `undefined` connot be stringified or parsed
+  - Will not work between REPL or browser frames. It checks the equality of an objects
+  constructor to registered constructors. REPL and frame constructors are not equal to
+  the same constructor in another frame.
