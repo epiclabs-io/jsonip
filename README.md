@@ -1,6 +1,11 @@
-# jsoni (JSON improved)
+# jsonip (JSON improved)
 
-Serialize and deserialize Javascript objects into JSON
+Serialize and deserialize Javascript objects into JSON adding metadata for type information so objects are deserialized with the corresponding prototype.
+
+(Forked from jaycetde's jsoni, https://github.com/jaycetde/jsoni )
+* Main differences are the way objects are encapsulated and some fixes to work on the latest nodejs version, as well as Typescript support
+
+
 
 It will stringify and parse these values (which JSON.stringify and JSON.parse will not):
 
@@ -21,14 +26,14 @@ var obj = {
     c: /[abc]+def/gi
 };
 
-var objStr = jsoni.stringify(obj);
+var objStr = jsonip.stringify(obj);
 /*
 '{
     "a": "NaN",
     "b": "Infinity",
     "c": {
-        "constructName": "RegExp",
-        "data": {
+        "__class": "RegExp",
+        "__data": {
             "source": "[abc]+def",
             "flags": "gi"
         }
@@ -36,7 +41,7 @@ var objStr = jsoni.stringify(obj);
 }'
 */
 
-var objB = jsoni.parse(objStr);
+var objB = jsonip.parse(objStr);
 
 // objB.c is a regular expression clone of obj.c
 objB.c.toString();
@@ -50,7 +55,7 @@ objB.c.test('aaabbbcccdef');
 ## Installation
 
 ```bash
-npm install jsoni
+npm install jsonip
 ```
 
 ## Dependencies
@@ -59,15 +64,15 @@ none
 
 ## API
 
-### jsoni.stringify(value, [ replacer ], [ space ])
+### jsonip.stringify(value, [ replacer ], [ space ])
 
 same as JSON.stringify
 
-### jsoni.parse(value, [ reviver ])
+### jsonip.parse(value, [ reviver ])
 
 same as JSON.parse
 
-### jsoni.register(name, constructor, [ options ])
+### jsonip.register(name, constructor, [ options ])
 
 registers a constructor to serialize and deserialize
 
@@ -78,7 +83,7 @@ registers a constructor to serialize and deserialize
 
 ```javascript
 
-var jsoni = require('jsoni');
+var jsoni = require('jsonip');
 
 function Person(name, age) {
     this.name = name;
@@ -89,7 +94,7 @@ Person.prototype.greet = function () {
     return 'hello, my name is ' + this.name + ' and I am ' + this.age + ' years old';
 };
 
-jsoni.register('Person', Person, {
+jsonip.register('Person', Person, {
     serialize: function (person) {
         return {
             name: person.name,
@@ -103,32 +108,27 @@ jsoni.register('Person', Person, {
 
 var me = new Person('Jayce', 22);
 
-var str = jsoni.stringify(me);
-// '{"constructName":"Person","data":{"name":"Jayce","age":22}}'
+var str = jsonip.stringify(me);
+// '{"__class":"Person","__data":{"name":"Jayce","age":22}}'
 
-var newMe = jsoni.parse(str);
+var newMe = jsonip.parse(str);
 
 newMe.greet();
 // 'hello, my name is Jayce and I am 22 years old'
 
 ```
 
-#### toJSON
+#### serialize
 
-If a constructor's prototype has a `toJSON` method, then `serialize` does not need to be specified.
-`serialize` will take precedence over `toJSON` if it is specified. If neither are specified, then the
-default behavior of `JSON.stringify` is used.
+If a serialize function was passed in the `register` call as an option, it is used. Otherwise, if the object has a serialize function, it is used to serialize the object instead. If neither are specified, then the default behavior of `JSON.stringify` is used.
 
-#### fromJSON
+#### deserialize
 
-If a constructor has a `fromJSON` method (ex: `Person.fromJSON`, not `Person.prototype.fromJSON`), then
-`deserialize` does not need to be specified. `deserialize` will take precedence over `fromJSON` if it
-is specified. If neither are specified, then the json data will be passed directly into the constructor
-(`new Constructor(data)`).
+If a deserialized function was passed in the `register`call as an option, it is used. Otherwise, jsonip will try to call a `deserialize` method on a new object calling the constructor without parameters. If neither are specified, jsonip will copy the json data memberwise.
 
-### jsoni.unregister(name)
+### jsonip.unregister(name)
 
-unregister a constructor from jsoni
+unregister a constructor from jsonip
 
 ## Limitations
 

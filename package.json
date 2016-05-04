@@ -1,7 +1,7 @@
 {
-  "name": "jsoni",
-  "version": "0.0.1",
-  "description": "Serialize and deserialize Javascript objects into JSON",
+  "name": "jsonip",
+  "version": "0.0.2",
+  "description": "Serialize and deserialize Javascript objects into JSON, including metadata to restore objects to their original prototype",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -16,8 +16,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JayceTDE/"
+    "url": "https://github.com/epiclabs-io/jsonip"
   },
-  "author": "Jayce Pulsipher <jaycemp@gmail.com>",
+  "author": "Javier Peletier <jm@epiclabs.io>",
   "license": "MIT"
 }
