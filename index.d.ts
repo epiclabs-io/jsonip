@@ -1,4 +1,4 @@
-declare module "jsonip" {
+
     
     export interface IJSONipOptions{
         serializer?: ()=>any;
@@ -9,10 +9,11 @@ declare module "jsonip" {
         deserialize:(input:any)=>void;
     
     }
-    export function stringify(value:any, replacer:(key:string,value:any)=>any);
-    export function parse(text:string,reviver:(key:string,value:any)=>any);
-    export function register(name:string, construct:Function,options:IJSONipOptions);
-    export function unregister(name:string);
+    export function stringify(value:any, replacer:(key:string,value:any)=>any):string;
+    export function parse<R>(text:string,reviver:(key:string,value:any)=>any):R;
+    export function register(name:string, construct:any,options?:IJSONipOptions):void;
+    export function unregister(name:string):void;
     
     
-}
+
+
