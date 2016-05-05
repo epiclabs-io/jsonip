@@ -1,27 +1,13 @@
-
-declare var jsonip: jsonip.IJsoniPStatic;
-
-declare module "jsonip" {
-    export = jsonip;
-}
-
-declare namespace jsonip {
-
-    interface IJSONipOptions {
-        serializer?: () => any;
-        deserializer?: (input: any) => any;
+    export interface IJSONipOptions{
+        serializer?: ()=>any;
+        deserializer?:(input:any)=>any;
     }
-    interface ISerializable {
-        serialize: () => any;
-        deserialize: (input: any) => void;
-
+    export interface ISerializable {
+           serialize: ()=>any;
+        deserialize:(input:any)=>void;
+    
     }
-
-    interface IJsoniPStatic {
-        stringify(value: any, replacer: (key: string, value: any) => any): string;
-        parse<R>(text: string, reviver: (key: string, value: any) => any): R;
-        register(name: string, construct: any, options?: IJSONipOptions): void;
-        unregister(name: string): void;
-    }
-
-}
+    export function stringify(value:any, replacer:(key:string,value:any)=>any):string;
+    export function parse<R>(text:string,reviver:(key:string,value:any)=>any):R;
+    export function register(name:string, construct:any,options?:IJSONipOptions):void;
+    export function unregister(name:string):void;
