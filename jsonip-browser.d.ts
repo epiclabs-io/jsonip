@@ -18,7 +18,7 @@ declare namespace jsonip {
     }
 
     interface IJsoniPStatic {
-        stringify(value: any, replacer?: (key: string, value: any) => any): string;
+        stringify(value: any, replacer?: (key: string, value: any) => any, space?:string): string;
         parse<R>(text: string, reviver?: (key: string, value: any) => any): R;
         register(name: string, construct: any, options?: IJSONipOptions): void;
         unregister(name: string): void;
