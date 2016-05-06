@@ -5,6 +5,10 @@ function School(name) {
     this.name = name;
 }
 
+function Specialty(name) {
+    this.name = name;
+}
+
 
 function Person(name, age) {
     this.name = name;
@@ -12,6 +16,7 @@ function Person(name, age) {
     this.schools = [];
     this.favoriteNumbers = [1, 2, 3, 4, 5];
     this.zero = null;
+    this.specialty=new Specialty("cooking");
 }
 
 Person.prototype.sayHello = function () {
@@ -105,9 +110,27 @@ function deserialize(jobj) {
 
 }
 
+Person.serializeMetadata = {
+    name: "string",
+    age: "number",
+    schools: "School[]",
+    zero: "any",
+    specialty:"Specialty"
+}
 
-jsonip.register("PersonKlass", Person);
-jsonip.register("SchoolKlass",School);
+School.serializeMetadata = {
+    name: "string"
+}
+
+Specialty.serializeMetadata= {
+    name:"string"
+}
+
+
+jsonip.register("Person", Person);
+jsonip.register("School", School);
+jsonip.register("Specialty", Specialty);
+
 
 /*
 var s = serialize(pepe);
@@ -117,9 +140,14 @@ console.log(JSON.stringify(deserialize(s)));
 
 */
 
-console.log(s = jsonip.stringify(pepe));
+//console.log(s = jsonip.stringify(pepe));
 
-var v = jsonip.parse(s);
+var sp = jsonip.serialize(pepe);
+console.log(JSON.stringify(sp));
+
+var p = jsonip.deserialize(sp, Person);
+
+//var v = jsonip.parse(s);
 
 
-console.log(s = jsonip.stringify(v));
+//console.log(s = jsonip.stringify(v));

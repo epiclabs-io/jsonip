@@ -9,9 +9,118 @@ require('./builtins')(register);
 
 exports.stringify = stringify;
 exports.parse = parse;
+exports.serialize = serialize;
+exports.deserialize = deserialize;
 
 exports.register = register;
 exports.unregister = unregister;
+
+var arrayRegexp = /(?:(.*))\[\]/g;
+
+
+function serialize(value) {
+
+    var meta = value.constructor.serializeMetadata;
+    if (meta) {
+        var json = {};
+        for (var key in meta) {
+            var t = meta[key];
+            var item = value[key];
+            if (registered[t]) {
+                json[key] = serialize(item);
+            }
+            else {
+                var match = arrayRegexp.exec(t);
+                if (match && match[1]) {
+                    t = match[1];
+                    if (item && !Array.isArray(item))
+                        throw "Serialization error: Item with key " + key + " is not an array";
+
+                    if (item) {
+
+                        var arr = [];
+                        for (var i = 0; i < item.length; i++) {
+                            var arrayItem = item[i];
+                            if (arrayItem && (registered[t] && registered[t].construct != arrayItem.constructor))
+                                throw "Item " + i + " in array is of the wrong type. Expected '" + t + "'";
+                            arr.push(serialize(arrayItem));
+                        }
+                        json[key] = arr;
+                    }
+                    else
+                        json[key] = null;
+
+                }
+                else
+                    json[key] = item;
+            }
+
+        }
+        return json;
+    }
+    else
+        return value;
+
+}
+
+function deserialize(json, classObj) {
+    
+    if(!classObj)
+        return json;
+    
+    var className;
+    if (typeof classObj == "string") {
+        className = classObj;
+        classObj = registered[classObj];
+        if (!classObj)
+            throw "Error deserializing. Class " + className + " not registered";
+        classObj = classObj.construct;
+    }
+
+    var meta = classObj.serializeMetadata;
+
+    if (meta) {
+        var obj = new classObj();
+        for (var key in meta) {
+            var t = meta[key];
+            var item = json[key];
+            if (registered[t]) {
+                obj[key] = deserialize(item, registered[t].construct);
+            }
+            else {
+                var match = arrayRegexp.exec(t);
+                if (match && match[1]) {
+                    t = match[1];
+                    if (item && !Array.isArray(item))
+                        throw "Deserialization error: Item with key " + key + " is not an array";
+                     
+                    if (item) {
+
+                        var arr = [];
+                        var arrayType=registered[t] ? registered[t].construct : null;
+                        for (var i = 0; i < item.length; i++) {
+                            arr.push(deserialize(item[i],arrayType));
+                        }
+                        obj[key] = arr;
+                    }
+                    else
+                        obj[key] = null;
+
+                }
+                else
+                    obj[key] = item;
+            }
+
+        }
+        return obj;
+    }
+    else
+        return json;
+
+}
+
+
+
 
 function stringify(value, replacer, space) {
 
