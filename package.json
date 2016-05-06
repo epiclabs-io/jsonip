@@ -1,6 +1,6 @@
 {
   "name": "jsonip",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Serialize and deserialize Javascript objects into JSON, including metadata to restore objects to their original prototype",
   "main": "index.js",
   "directories": {
