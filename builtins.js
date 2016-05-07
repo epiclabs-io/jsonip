@@ -6,6 +6,9 @@ module.exports = function (register) {
       , {
           serialize: function (date) {
               return date.getTime();
+          },
+          deserialize:function(json){
+              return new Date(json);
           }
       }
     );

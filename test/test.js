@@ -13,6 +13,7 @@ function Specialty(name) {
 function Person(name, age) {
     this.name = name;
     this.age = age;
+    this.birthDate=null;
     this.schools = [];
     this.favoriteNumbers = [1, 2, 3, 4, 5];
     this.zero = null;
@@ -110,13 +111,17 @@ function deserialize(jobj) {
 
 }
 
-Person.serializeMetadata = {
-    name: "string",
-    age: "number",
+ 
+ Person.serializeMetadata = {
+    name: "String",
+    age: "Number",
+    birthDate: "Date",
     schools: "School[]",
     zero: "any",
     specialty:"Specialty"
 }
+
+
 
 School.serializeMetadata = {
     name: "string"
@@ -141,11 +146,16 @@ console.log(JSON.stringify(deserialize(s)));
 */
 
 //console.log(s = jsonip.stringify(pepe));
+pepe.birthDate=new Date(1979,3,12);
+var sp = jsonip.serialize(pepe, Person);
 
-var sp = jsonip.serialize(pepe);
-console.log(JSON.stringify(sp));
+console.log(sp);
 
 var p = jsonip.deserialize(sp, Person);
+
+//console.log(jsonip.stringify(p));
+
+//var p = jsonip.deserialize(sp, Person);
 
 //var v = jsonip.parse(s);
 
