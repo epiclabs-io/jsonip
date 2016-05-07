@@ -20,6 +20,11 @@ var arrayRegexp = /(?:(.*))\[\]/g;
 
 function serialize(value) {
 
+    var customSerializeFunction = value.serialize;
+    if (customSerializeFunction && typeof customSerializeFunction === "function") {
+        return customSerializeFunction();
+    }
+
     var meta = value.constructor.serializeMetadata;
     if (meta) {
         var json = {};
@@ -64,10 +69,10 @@ function serialize(value) {
 }
 
 function deserialize(json, classObj) {
-    
-    if(!classObj)
+
+    if (!classObj)
         return json;
-    
+
     var className;
     if (typeof classObj == "string") {
         className = classObj;
@@ -75,6 +80,11 @@ function deserialize(json, classObj) {
         if (!classObj)
             throw "Error deserializing. Class " + className + " not registered";
         classObj = classObj.construct;
+    }
+
+    var customDeserializeFunction = json.deserialize;
+    if (customDeserializeFunction && typeof customDeserializeFunction === "function") {
+        return customDeserializeFunction();
     }
 
     var meta = classObj.serializeMetadata;
@@ -93,13 +103,13 @@ function deserialize(json, classObj) {
                     t = match[1];
                     if (item && !Array.isArray(item))
                         throw "Deserialization error: Item with key " + key + " is not an array";
-                     
+
                     if (item) {
 
                         var arr = [];
-                        var arrayType=registered[t] ? registered[t].construct : null;
+                        var arrayType = registered[t] ? registered[t].construct : null;
                         for (var i = 0; i < item.length; i++) {
-                            arr.push(deserialize(item[i],arrayType));
+                            arr.push(deserialize(item[i], arrayType));
                         }
                         obj[key] = arr;
                     }
