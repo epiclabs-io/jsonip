@@ -1,13 +1,13 @@
-# jsonip (JSON improved)
+# jsonip (JSON serializer / deserializer)
+
+((preliminary documentation))
 
 Serialize and deserialize Javascript objects into JSON adding metadata for type information so objects are deserialized with the corresponding prototype.
 
-(Forked from jaycetde's jsoni, https://github.com/jaycetde/jsoni )
+(Inspired by jaycetde's jsoni, https://github.com/jaycetde/jsoni )
 * Main differences are the way objects are encapsulated and some fixes to work on the latest nodejs version, as well as Typescript support
 
-
-
-It will stringify and parse these values (which JSON.stringify and JSON.parse will not):
+It will serialize and deserialize these values (which JSON.stringify and JSON.parse will not):
 
 * NaN
 * Infinity
@@ -17,40 +17,6 @@ It will stringify and parse these values (which JSON.stringify and JSON.parse wi
 * all builtin error constructs (Error, SyntaxError, TypeError, ReferenceError, RangeError, EvalError, URIError)
 
 If any core javascript objects are missing, please submit an issue or pull request
-
-```javascript
-
-var obj = {
-    a: NaN,
-    b: Infinity,
-    c: /[abc]+def/gi
-};
-
-var objStr = jsonip.stringify(obj);
-/*
-'{
-    "a": "NaN",
-    "b": "Infinity",
-    "c": {
-        "__class": "RegExp",
-        "__data": {
-            "source": "[abc]+def",
-            "flags": "gi"
-        }
-    }
-}'
-*/
-
-var objB = jsonip.parse(objStr);
-
-// objB.c is a regular expression clone of obj.c
-objB.c.toString();
-// '/[abc]+def/gi'
-
-objB.c.test('aaabbbcccdef');
-// true
-
-```
 
 ## Installation
 
@@ -64,22 +30,22 @@ none
 
 ## API
 
-### jsonip.stringify(value, [ replacer ], [ space ])
+### jsonip.serialize(value, type)
 
 same as JSON.stringify
 
-### jsonip.parse(value, [ reviver ])
+### jsonip.deserialize(json, type)
 
 same as JSON.parse
 
-### jsonip.register(name, constructor, [ options ])
+### jsonip.register(name, constructor, [ optionalFunctions ])
 
 registers a constructor to serialize and deserialize
 
-#### options
+#### optionalFunctions
 
 * serialize - Function to serialize an object. May return any value that can be stringified.
-* deserialize - Function to reconstruct an object. Should return a constructed object
+* deserialize - Function to reconstruct an object. Must return a constructed object
 
 ```javascript
 
@@ -108,10 +74,10 @@ jsonip.register('Person', Person, {
 
 var me = new Person('Jayce', 22);
 
-var str = jsonip.stringify(me);
-// '{"__class":"Person","__data":{"name":"Jayce","age":22}}'
+var json = jsonip.serialize(me);
+// '{"__type":"Person","__data":{"name":"Jayce","age":22}}'
 
-var newMe = jsonip.parse(str);
+var newMe = jsonip.parse(json);
 
 newMe.greet();
 // 'hello, my name is Jayce and I am 22 years old'
