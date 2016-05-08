@@ -22,7 +22,7 @@ function Person(name, age) {
 
 Person.prototype.sayHello = function () {
 
-    console.log("Hello, I am " + name);
+    console.log("Hello, I am " + this.name);
 
 }
 
