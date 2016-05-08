@@ -8,14 +8,18 @@ var registered = {};
 
 require('./builtins')(register);
 
-exports.serialize = serialize;
-exports.deserialize = deserialize;
-
-exports.register = register;
-exports.unregister = unregister;
-
 var arrayRegexp = /(?:(.*))\[\]/g;
 
+/*function createObject(typeName) {
+   
+   var reg = registered[typeName];
+   
+   if(!reg)
+   throw new Error("Error creating object, '" + typeName +"' not registered.");
+   
+   if(reg.)
+    
+}*/
 
 function serialize(value, type) {
 
@@ -39,7 +43,7 @@ function serialize(value, type) {
                     var t = meta[key];
                     var item = value[key];
                     if (registered[t]) {
-                        json[key] = serialize(item, registered[t].construct);
+                        json[key] = serialize(item, registered[t].construct || t);
                     }
                     else {
                         var match = arrayRegexp.exec(t);
@@ -55,7 +59,7 @@ function serialize(value, type) {
                                     var arrayItem = item[i];
                                     if (arrayItem && (registered[t] && registered[t].construct != arrayItem.constructor))
                                         throw "Item " + i + " in array is of the wrong type. Expected '" + t + "'";
-                                    arr.push(serialize(arrayItem, arrayItem.constructor));
+                                    arr.push(serialize(arrayItem, arrayItem.constructor || t));
                                 }
                                 json[key] = arr;
                             }
@@ -79,6 +83,9 @@ function serialize(value, type) {
 
         }
         return json;
+    }
+    else if (typeof type === "string" && registered[type] && registered[type].serialize) {
+        return registered[type].serialize(value);
     }
     else if (value.constructor.__type && registered[value.constructor.__type]) {
         return {
@@ -111,9 +118,7 @@ function deserialize(json, type) {
     if (!type) {
         if (json.__type && (typeof json.__data != "undefined")) {
             typeName = json.__type;
-
             json = json.__data;
-
         }
         else {
             if (Array.isArray(json)) {
@@ -126,12 +131,15 @@ function deserialize(json, type) {
             return json;
         }
     }
+    else if (typeof type === "string") {
+        typeName = type;
+    }
     else
         typeName = type.__type;
 
     var reg = registered[typeName];
-    type = reg ? reg.construct : null;
-    if (!type)
+
+    if (!reg)
         throw new Error("Unregistered class '" + typeName + "'");
 
     var obj;
@@ -140,7 +148,9 @@ function deserialize(json, type) {
         obj = reg.deserialize(json);
     }
     else {
-
+        type = reg ? reg.construct : null;
+        if (!type)
+            throw new Error("No constructor and no deserializer?. The register function must not have allowed this...");
         obj = new type();
 
         var meta = type.serializeMetadata;
@@ -189,6 +199,7 @@ function deserialize(json, type) {
 }
 
 
+
 function register(name, construct, options) {
     options = options || {};
 
@@ -202,7 +213,12 @@ function register(name, construct, options) {
         options.serialize = construct.serialize;
     }
 
-    construct.__type = name;
+    if (construct != null)
+        construct.__type = name;
+    else
+        if (!options.serialize && !options.deserialize)
+            throw new Error("Must provide serialize/deserialize functions for classless types");
+
     registered[name] = options;
 }
 
@@ -211,3 +227,85 @@ function unregister(name) {
     delete registered[name];
 
 }
+
+
+/*
+
+function registerMap(name) {
+
+    var reg = registered[name];
+    if (!reg)
+        throw new Error("Error registering map. Register '" + name + "' first.");
+
+    var cn = reg.construct || reg.name;
+
+    register("Map<" + name + ">", null, {
+        serialize: function (value) {
+            var json = {};
+            for (var key in value) {
+                if (value.hasOwnProperty(key)) {
+                    json[key] = serialize(value[key], cn);
+                }
+            }
+            return json;
+        },
+        deserialize: function (json) {
+            var obj = {};
+            for (var key in json) {
+                if (json.hasOwnProperty(key)) {
+                    obj[key] = deserialize(json[key], cn);
+                }
+            }
+            return obj;
+        }
+
+    })
+
+}
+
+*/
+
+var createMap = function (mapType) {
+
+    function Map() {
+
+    }
+
+    if (!mapType.__type)
+        throw new Error("Error creating map. Register the type first.");
+
+    var serializeMap = function (value) {
+        var json = {};
+        for (var key in value) {
+            if (value.hasOwnProperty(key)) {
+                json[key] = serialize(value[key], mapType);
+            }
+        }
+        return json;
+    }
+
+    var deserializeMap = function (json) {
+        var obj = new Map();
+        for (var key in json) {
+            if (json.hasOwnProperty(key)) {
+                obj[key] = deserialize(json[key], mapType);
+            }
+        }
+        return obj;
+    }
+
+
+
+    register("Map<" + mapType.__type + ">", Map, { serialize: serializeMap, deserialize: deserializeMap });
+
+
+    return Map;
+}
+
+
+exports.serialize = serialize;
+exports.deserialize = deserialize;
+
+exports.register = register;
+exports.unregister = unregister;
+exports.createMap = createMap;

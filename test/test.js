@@ -13,11 +13,11 @@ function Specialty(name) {
 function Person(name, age) {
     this.name = name;
     this.age = age;
-    this.birthDate=null;
+    this.birthDate = null;
     this.schools = [];
     this.favoriteNumbers = [1, 2, 3, 4, 5];
     this.zero = null;
-    this.specialty=new Specialty("cooking");
+    this.specialty = new Specialty("cooking");
 }
 
 Person.prototype.sayHello = function () {
@@ -111,14 +111,14 @@ function deserialize(jobj) {
 
 }
 
- 
- Person.serializeMetadata = {
+
+Person.serializeMetadata = {
     name: "String",
     age: "Number",
     birthDate: "Date",
     schools: "School[]",
     zero: "any",
-    specialty:"Specialty"
+    specialty: "Specialty"
 }
 
 
@@ -127,8 +127,8 @@ School.serializeMetadata = {
     name: "string"
 }
 
-Specialty.serializeMetadata= {
-    name:"string"
+Specialty.serializeMetadata = {
+    name: "string"
 }
 
 
@@ -145,8 +145,23 @@ console.log(JSON.stringify(deserialize(s)));
 
 */
 
+var PersonMap = jsonip.createMap(Person);
+
+var map= new PersonMap();
+
+    map.juan=new Person("Juan",11);
+    map.pepe=pepe;
+    map[5]=pepe;
+
+
+
+var m = jsonip.serialize(map,"Map<Person>");
+var n = jsonip.deserialize(m,"Map<Person>");
+
+console.log(jsonip.serialize("Hello"));
+
 //console.log(s = jsonip.stringify(pepe));
-pepe.birthDate=new Date(1979,3,12);
+pepe.birthDate = new Date(1979, 3, 12);
 var sp = jsonip.serialize(pepe, Person);
 
 console.log(sp);
