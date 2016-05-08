@@ -1,5 +1,5 @@
 
-var jsonip = require("../index");
+var jsonj = require("../index");
 
 function School(name) {
     this.name = name;
@@ -132,9 +132,9 @@ Specialty.serializeMetadata = {
 }
 
 
-jsonip.register("Person", Person);
-jsonip.register("School", School);
-jsonip.register("Specialty", Specialty);
+jsonj.register("Person", Person);
+jsonj.register("School", School);
+jsonj.register("Specialty", Specialty);
 
 
 /*
@@ -145,7 +145,7 @@ console.log(JSON.stringify(deserialize(s)));
 
 */
 
-var PersonMap = jsonip.createMap(Person);
+var PersonMap = jsonj.createMap(Person);
 
 var map= new PersonMap();
 
@@ -155,24 +155,24 @@ var map= new PersonMap();
 
 
 
-var m = jsonip.serialize(map,"Map<Person>");
-var n = jsonip.deserialize(m,"Map<Person>");
+var m = jsonj.serialize(map,"Map<Person>");
+var n = jsonj.deserialize(m,"Map<Person>");
 
-console.log(jsonip.serialize("Hello"));
+console.log(jsonj.serialize("Hello"));
 
-//console.log(s = jsonip.stringify(pepe));
+//console.log(s = jsonj.stringify(pepe));
 pepe.birthDate = new Date(1979, 3, 12);
-var sp = jsonip.serialize(pepe, Person);
+var sp = jsonj.serialize(pepe, Person);
 
 console.log(sp);
 
-var p = jsonip.deserialize(sp, Person);
+var p = jsonj.deserialize(sp, Person);
 
-//console.log(jsonip.stringify(p));
+//console.log(jsonj.stringify(p));
 
-//var p = jsonip.deserialize(sp, Person);
+//var p = jsonj.deserialize(sp, Person);
 
-//var v = jsonip.parse(s);
+//var v = jsonj.parse(s);
 
 
-//console.log(s = jsonip.stringify(v));
+//console.log(s = jsonj.stringify(v));

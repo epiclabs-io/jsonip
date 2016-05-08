@@ -1,3 +1,6 @@
+// Taken from jsoni parser, by Jayce Pulsipher <jaycemp@gmail.com>, https://github.com/jaycetde/jsoni
+// MIT License.
+
 module.exports = function (register) {
     
     register(
