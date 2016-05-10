@@ -8,8 +8,8 @@ export interface ISerializable<T> {
     serializeMetadata?: any;
 }
 
-export function serialize<T>(value: T, type: ISerializable<T>): Object;
-export function deserialize<R>(json: Object, type: ISerializable<R>): R;
+export function serialize<T>(value: T, type?: ISerializable<T>): Object;
+export function deserialize<R>(json: Object, type?: ISerializable<R>): R;
 export function register<T>(name: string, construct: ISerializable<T>, options?: IjsonjOptions): void;
 export function unregister(name: string): void;
 

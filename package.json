@@ -1,6 +1,6 @@
 {
   "name": "jsonj",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Serialize and deserialize Javascript objects into JSON, including metadata to restore objects to their original prototype",
   "main": "index.js",
   "directories": {
