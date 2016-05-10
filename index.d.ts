@@ -18,7 +18,7 @@ export declare class Map<T>{
     [key: string]: T;
 }
 
-interface IMapClass<T> {
+export interface IMapClass<T> {
     new (): Map<T>;
     [key: string]: T;
 }

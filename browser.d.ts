@@ -20,6 +20,11 @@ declare namespace jsonjns {
     class Map<T>{
         [key: string]: T;
     }
+	
+	interface IMapClass<T> {
+    new (): Map<T>;
+    [key: string]: T;
+}
 
     interface IjsonjStatic {
         serialize<T>(value: T, type?: ISerializable<T>): Object;
