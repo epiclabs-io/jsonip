@@ -31,7 +31,7 @@ declare namespace jsonjns {
         deserialize<R>(json: Object, type?: ISerializable<R>): R;
         register(name: string, construct: any, options?: IjsonjOptions): void;
         unregister(name: string): void;
-        createMap<T>(type: { new (): T }): { new (): Map<T> }
+        createMap<T>(type: { new (): T }): IMapClass<T>
 
     }
 
